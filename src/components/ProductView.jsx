@@ -4,9 +4,21 @@ import Button from "./Button";
 import numberWithCommas from "../utils/numberWithCommas";
 
 import { withRouter } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addItem } from "../redux/shopping-cart/cartItemSlice";
 
 const ProductView = (props) => {
-  const product = props.product;
+  const dispatch = useDispatch();
+
+  let product = props.product;
+
+  if (product === undefined)
+    product = {
+      price: 0,
+      title: "",
+      colors: [],
+      size: [],
+    };
 
   const [previewImg, setPreviewImg] = useState(product.image01);
 
@@ -50,11 +62,33 @@ const ProductView = (props) => {
   };
 
   const addToCart = () => {
-    if (check()) console.log({ color, size, quantity });
+    if (check()) {
+      dispatch(
+        addItem({
+          slug: product.slug,
+          color: color,
+          size: size,
+          quantity: quantity,
+          price: product.price,
+        }),
+      );
+      alert("Sản phẩm bạn chọn đã được thêm vào giỏ hàng");
+    }
   };
 
   const goToCart = () => {
-    if (check()) props.history.push("/cart");
+    if (check()) {
+      dispatch(
+        addItem({
+          slug: product.slug,
+          color: color,
+          size: size,
+          quantity: quantity,
+          price: product.price,
+        }),
+      );
+      props.history.push("/cart");
+    }
   };
 
   return (
@@ -180,7 +214,7 @@ const ProductView = (props) => {
 };
 
 ProductView.propTypes = {
-  product: PropTypes.object.isRequired,
+  product: PropTypes.object,
 };
 
 export default withRouter(ProductView);
